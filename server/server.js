@@ -1,5 +1,6 @@
 require('./config/config');
 require('./db/mongoose');
+
 const _ = require('lodash');
 const {ObjectID} = require('mongodb');
 const bodyParser = require('body-parser');
@@ -7,6 +8,7 @@ const express = require('express');
 
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 const port = process.env.PORT || 3000;
@@ -104,6 +106,10 @@ app.post('/users', (req, res) => {
     }).catch((e) => {
         res.status(404).send(e);
     })
+});
+
+app.get('/users/me', authenticate, (req, res) => {
+    res.send(req.user);
 });
 
 app.listen(port, () => {
